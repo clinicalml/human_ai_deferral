@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>baselines.differentiable_triage &mdash; Human Deferral 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Human Deferral
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">improved_deferral</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Human Deferral</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">baselines.differentiable_triage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for baselines.differentiable_triage</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">pyexpat</span> <span class="kn">import</span> <span class="n">model</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">torch.utils.data</span> <span class="k">as</span> <span class="nn">data</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">helpers.utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">helpers.metrics</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.basemethod</span> <span class="kn">import</span> <span class="n">BaseMethod</span>
+
+<span class="n">eps_cst</span> <span class="o">=</span> <span class="mf">1e-8</span>
+
+
+<div class="viewcode-block" id="weighted_cross_entropy_loss"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.weighted_cross_entropy_loss">[docs]</a><span class="k">def</span> <span class="nf">weighted_cross_entropy_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weigthed cross entropy loss</span>
+<span class="sd">    outputs: network outputs with softmax</span>
+<span class="sd">    labels: target</span>
+<span class="sd">    weights: weights for each example</span>
+
+<span class="sd">    return: weighted cross entropy loss as scalar</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>  <span class="c1"># regular CE</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DifferentiableTriage"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage">[docs]</a><span class="k">class</span> <span class="nc">DifferentiableTriage</span><span class="p">(</span><span class="n">BaseMethod</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_class</span><span class="p">,</span>
+        <span class="n">model_rejector</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">,</span>
+        <span class="n">weight_low</span><span class="o">=</span><span class="mf">0.00</span><span class="p">,</span>
+        <span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;human_error&quot;</span><span class="p">,</span>
+        <span class="n">plotting_interval</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method from the paper &#39;Differentiable Learning Under Triage&#39; adapted to this setting</span>
+<span class="sd">        Args:</span>
+<span class="sd">            model_class (_type_): _description_</span>
+<span class="sd">            model_rejector (_type_): _description_</span>
+<span class="sd">            device (_type_): _description_</span>
+<span class="sd">            weight_low (float in [0,1], optional): weight for points that are deferred so that classifier trains less on them</span>
+<span class="sd">            strategy (_type_): pick between &quot;model_first&quot;, &quot;human_error&quot;</span>
+<span class="sd">                &quot;model_first&quot; means that the rejector is 1 only if the human is correct and the model is wrong</span>
+<span class="sd">                &quot;human_error&quot;: the rejector is 1 if the human gets it right, otherwise 0</span>
+<span class="sd">            plotting_interval (int, optional): _description_. Defaults to 100.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span> <span class="o">=</span> <span class="n">model_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span> <span class="o">=</span> <span class="n">model_rejector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_low</span> <span class="o">=</span> <span class="n">weight_low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotting_interval</span> <span class="o">=</span> <span class="n">plotting_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span>
+
+<div class="viewcode-block" id="DifferentiableTriage.fit_epoch_class"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.fit_epoch_class">[docs]</a>    <span class="k">def</span> <span class="nf">fit_epoch_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        train classifier for single epoch</span>
+<span class="sd">        Args:</span>
+<span class="sd">            dataloader (dataloader): _description_</span>
+<span class="sd">            optimizer (optimizer): _description_</span>
+<span class="sd">            verbose (bool, optional): to print loss or not. Defaults to True.</span>
+<span class="sd">            epoch (int, optional): _description_. Defaults to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_time</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">top1</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+            <span class="n">data_x</span> <span class="o">=</span> <span class="n">data_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">data_y</span> <span class="o">=</span> <span class="n">data_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">data_x</span><span class="p">)</span>
+            <span class="c1"># cross entropy loss</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">data_y</span><span class="p">)</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">prec1</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">data_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">top1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prec1</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">data_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+            <span class="c1"># measure elapsed time</span>
+            <span class="n">batch_time</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">end</span><span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">loss</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nan loss&quot;</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NAN LOSS&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">batch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotting_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Epoch: [</span><span class="si">{0}</span><span class="s2">][</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">]</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Time </span><span class="si">{batch_time.val:.3f}</span><span class="s2"> (</span><span class="si">{batch_time.avg:.3f}</span><span class="s2">)</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Loss </span><span class="si">{loss.val:.4f}</span><span class="s2"> (</span><span class="si">{loss.avg:.4f}</span><span class="s2">)</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Prec@1 </span><span class="si">{top1.val:.3f}</span><span class="s2"> (</span><span class="si">{top1.avg:.3f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">epoch</span><span class="p">,</span>
+                        <span class="n">batch</span><span class="p">,</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">),</span>
+                        <span class="n">batch_time</span><span class="o">=</span><span class="n">batch_time</span><span class="p">,</span>
+                        <span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+                        <span class="n">top1</span><span class="o">=</span><span class="n">top1</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DifferentiableTriage.find_machine_samples"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.find_machine_samples">[docs]</a>    <span class="k">def</span> <span class="nf">find_machine_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_outputs</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_outputs (_type_): _description_</span>
+<span class="sd">            data_y (_type_): _description_</span>
+<span class="sd">            hum_preds (_type_): _description_</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            array:  binary array of size equal to the input indicating whether to train or not on each poin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_class_probs</span><span class="p">,</span> <span class="n">predicted_class</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">model_outputs</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">model_error</span> <span class="o">=</span> <span class="n">predicted_class</span> <span class="o">!=</span> <span class="n">data_y</span>
+        <span class="n">hum_error</span> <span class="o">=</span> <span class="n">hum_preds</span> <span class="o">!=</span> <span class="n">data_y</span>
+
+        <span class="n">rejector_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">soft_weights_classifier</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;model_first&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model_outputs</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">model_error</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">rejector_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">soft_weights_classifier</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">hum_error</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">rejector_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">soft_weights_classifier</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_low</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rejector_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">soft_weights_classifier</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model_outputs</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hum_error</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">rejector_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">soft_weights_classifier</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_low</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rejector_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">soft_weights_classifier</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">rejector_labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">rejector_labels</span><span class="p">)</span>
+        <span class="n">soft_weights_classifier</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">soft_weights_classifier</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rejector_labels</span><span class="p">,</span> <span class="n">soft_weights_classifier</span></div>
+
+<div class="viewcode-block" id="DifferentiableTriage.fit_epoch_class_triage"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.fit_epoch_class_triage">[docs]</a>    <span class="k">def</span> <span class="nf">fit_epoch_class_triage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the model for classifier for one epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_time</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">top1</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+            <span class="n">data_x</span> <span class="o">=</span> <span class="n">data_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">data_y</span> <span class="o">=</span> <span class="n">data_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">hum_preds</span> <span class="o">=</span> <span class="n">hum_preds</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">data_x</span><span class="p">)</span>
+            <span class="c1"># cross entropy loss</span>
+
+            <span class="n">rejector_labels</span><span class="p">,</span> <span class="n">soft_weights_classifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_machine_samples</span><span class="p">(</span>
+                <span class="n">outputs</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span>
+            <span class="p">)</span>
+
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">weighted_cross_entropy_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">soft_weights_classifier</span><span class="p">)</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">prec1</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">data_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">top1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prec1</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">data_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+            <span class="c1"># measure elapsed time</span>
+            <span class="n">batch_time</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">end</span><span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">loss</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nan loss&quot;</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NAN LOSS&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">batch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotting_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Epoch: [</span><span class="si">{0}</span><span class="s2">][</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">]</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Time </span><span class="si">{batch_time.val:.3f}</span><span class="s2"> (</span><span class="si">{batch_time.avg:.3f}</span><span class="s2">)</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Loss </span><span class="si">{loss.val:.4f}</span><span class="s2"> (</span><span class="si">{loss.avg:.4f}</span><span class="s2">)</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Prec@1 </span><span class="si">{top1.val:.3f}</span><span class="s2"> (</span><span class="si">{top1.avg:.3f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">epoch</span><span class="p">,</span>
+                        <span class="n">batch</span><span class="p">,</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">),</span>
+                        <span class="n">batch_time</span><span class="o">=</span><span class="n">batch_time</span><span class="p">,</span>
+                        <span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+                        <span class="n">top1</span><span class="o">=</span><span class="n">top1</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DifferentiableTriage.fit_epoch_rejector"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.fit_epoch_rejector">[docs]</a>    <span class="k">def</span> <span class="nf">fit_epoch_rejector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the rejector for one epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_time</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">top1</span> <span class="o">=</span> <span class="n">AverageMeter</span><span class="p">()</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+            <span class="n">data_x</span> <span class="o">=</span> <span class="n">data_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">data_y</span> <span class="o">=</span> <span class="n">data_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">hum_preds</span> <span class="o">=</span> <span class="n">hum_preds</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">outputs_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">data_x</span><span class="p">)</span>
+            <span class="n">rejector_labels</span><span class="p">,</span> <span class="n">soft_weights_classifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_machine_samples</span><span class="p">(</span>
+                <span class="n">outputs_class</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span>
+            <span class="p">)</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="p">(</span><span class="n">data_x</span><span class="p">)</span>
+            <span class="c1"># cross entropy loss</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">rejector_labels</span><span class="p">)</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">prec1</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rejector_labels</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">data_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">top1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prec1</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">data_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+            <span class="c1"># measure elapsed time</span>
+            <span class="n">batch_time</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">end</span><span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">loss</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nan loss&quot;</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NAN LOSS&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">batch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotting_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Epoch: [</span><span class="si">{0}</span><span class="s2">][</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">]</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Time </span><span class="si">{batch_time.val:.3f}</span><span class="s2"> (</span><span class="si">{batch_time.avg:.3f}</span><span class="s2">)</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Loss </span><span class="si">{loss.val:.4f}</span><span class="s2"> (</span><span class="si">{loss.avg:.4f}</span><span class="s2">)</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Prec@1 </span><span class="si">{top1.val:.3f}</span><span class="s2"> (</span><span class="si">{top1.avg:.3f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">epoch</span><span class="p">,</span>
+                        <span class="n">batch</span><span class="p">,</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">),</span>
+                        <span class="n">batch_time</span><span class="o">=</span><span class="n">batch_time</span><span class="p">,</span>
+                        <span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+                        <span class="n">top1</span><span class="o">=</span><span class="n">top1</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DifferentiableTriage.fit"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataloader_train</span><span class="p">,</span>
+        <span class="n">dataloader_val</span><span class="p">,</span>
+        <span class="n">dataloader_test</span><span class="p">,</span>
+        <span class="n">epochs</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">,</span>
+        <span class="n">lr</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">test_interval</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">optimizer_class</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+        <span class="n">optimizer_rejector</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler_class</span> <span class="o">=</span> <span class="n">scheduler</span><span class="p">(</span><span class="n">optimizer_class</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">)</span> <span class="o">*</span> <span class="n">epochs</span><span class="p">)</span>
+            <span class="n">scheduler_rejector</span> <span class="o">=</span> <span class="n">scheduler</span><span class="p">(</span><span class="n">optimizer_rejector</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">)</span> <span class="o">*</span> <span class="n">epochs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Re-training classifier on data based on the formula&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">epochs</span><span class="p">))):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_epoch_class_triage</span><span class="p">(</span>
+                <span class="n">dataloader_train</span><span class="p">,</span> <span class="n">optimizer_class</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">%</span> <span class="n">test_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">compute_classification_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scheduler_class</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="c1"># now fit rejector</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Fitting rejector on all data&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">epochs</span><span class="p">))):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_epoch_rejector</span><span class="p">(</span>
+                <span class="n">dataloader_train</span><span class="p">,</span> <span class="n">optimizer_rejector</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">%</span> <span class="n">test_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">compute_deferral_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scheduler_rejector</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">compute_deferral_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">dataloader_test</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="DifferentiableTriage.fit_hyperparam"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.fit_hyperparam">[docs]</a>    <span class="k">def</span> <span class="nf">fit_hyperparam</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataloader_train</span><span class="p">,</span>
+        <span class="n">dataloader_val</span><span class="p">,</span>
+        <span class="n">dataloader_test</span><span class="p">,</span>
+        <span class="n">epochs</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">,</span>
+        <span class="n">lr</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">test_interval</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">scheduler</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">weight_low_grid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">best_weight</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">best_acc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">model_rejector_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+        <span class="n">model_class_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">weight_low_grid</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight_low</span> <span class="o">=</span> <span class="n">weight</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_rejector_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_class_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+                <span class="n">dataloader_train</span><span class="p">,</span>
+                <span class="n">dataloader_val</span><span class="p">,</span>
+                <span class="n">dataloader_test</span><span class="p">,</span>
+                <span class="n">epochs</span><span class="p">,</span>
+                <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span>
+                <span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span><span class="p">,</span>
+                <span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span><span class="p">,</span>
+                <span class="n">test_interval</span> <span class="o">=</span> <span class="n">test_interval</span><span class="p">,</span>
+                <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span><span class="p">,</span>
+            <span class="p">)[</span><span class="s2">&quot;system_acc&quot;</span><span class="p">]</span>
+            <span class="n">accuracy</span> <span class="o">=</span> <span class="n">compute_deferral_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">))[</span><span class="s2">&quot;system_acc&quot;</span><span class="p">]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;weight low : </span><span class="si">{</span><span class="n">weight</span><span class="si">}</span><span class="s2">, accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">accuracy</span> <span class="o">&gt;</span> <span class="n">best_acc</span><span class="p">:</span>
+                <span class="n">best_acc</span> <span class="o">=</span> <span class="n">accuracy</span>
+                <span class="n">best_weight</span> <span class="o">=</span> <span class="n">weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_low</span> <span class="o">=</span> <span class="n">best_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_rejector_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_class_dict</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+                <span class="n">dataloader_train</span><span class="p">,</span>
+                <span class="n">dataloader_val</span><span class="p">,</span>
+                <span class="n">dataloader_test</span><span class="p">,</span>
+                <span class="n">epochs</span><span class="p">,</span>
+                <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span>
+                <span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span><span class="p">,</span>
+                <span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span><span class="p">,</span>
+                <span class="n">test_interval</span> <span class="o">=</span> <span class="n">test_interval</span><span class="p">,</span>
+                <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">test_metrics</span> <span class="o">=</span> <span class="n">compute_deferral_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">dataloader_test</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">test_metrics</span></div>
+
+<div class="viewcode-block" id="DifferentiableTriage.test"><a class="viewcode-back" href="../../baselines.html#baselines.differentiable_triage.DifferentiableTriage.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">):</span>
+        <span class="n">defers_all</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">truths_all</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">hum_preds_all</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">predictions_all</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># classifier only</span>
+        <span class="n">rej_score_all</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># rejector probability</span>
+        <span class="n">class_probs_all</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># classifier probability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">hum_preds</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+                <span class="n">data_x</span> <span class="o">=</span> <span class="n">data_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">data_y</span> <span class="o">=</span> <span class="n">data_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">hum_preds</span> <span class="o">=</span> <span class="n">hum_preds</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">outputs_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">data_x</span><span class="p">)</span>
+                <span class="n">outputs_class</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">outputs_class</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">outputs_rejector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_rejector</span><span class="p">(</span><span class="n">data_x</span><span class="p">)</span>
+                <span class="n">outputs_rejector</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">outputs_rejector</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">predictions_rejector</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">outputs_rejector</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">max_class_probs</span><span class="p">,</span> <span class="n">predicted_class</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">outputs_class</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">predictions_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">predicted_class</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">truths_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data_y</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">hum_preds_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">hum_preds</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">defers_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">predictions_rejector</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">rej_score_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">outputs_rejector</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">class_probs_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">outputs_class</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="c1"># convert to numpy</span>
+        <span class="n">defers_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">defers_all</span><span class="p">)</span>
+        <span class="n">truths_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truths_all</span><span class="p">)</span>
+        <span class="n">hum_preds_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hum_preds_all</span><span class="p">)</span>
+        <span class="n">predictions_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predictions_all</span><span class="p">)</span>
+        <span class="n">rej_score_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rej_score_all</span><span class="p">)</span>
+        <span class="n">class_probs_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">class_probs_all</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;defers&quot;</span><span class="p">:</span> <span class="n">defers_all</span><span class="p">,</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">truths_all</span><span class="p">,</span>
+            <span class="s2">&quot;hum_preds&quot;</span><span class="p">:</span> <span class="n">hum_preds_all</span><span class="p">,</span>
+            <span class="s2">&quot;preds&quot;</span><span class="p">:</span> <span class="n">predictions_all</span><span class="p">,</span>
+            <span class="s2">&quot;rej_score&quot;</span><span class="p">:</span> <span class="n">rej_score_all</span><span class="p">,</span>
+            <span class="s2">&quot;class_probs&quot;</span><span class="p">:</span> <span class="n">class_probs_all</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Hussein Mozannar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

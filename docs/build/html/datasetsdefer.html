@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>datasetsdefer package &mdash; Human Deferral 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="helpers package" href="helpers.html" />
+    <link rel="prev" title="baselines package" href="baselines.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Human Deferral
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">improved_deferral</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="baselines.html">baselines package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">datasetsdefer package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.basedataset">datasetsdefer.basedataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.broward">datasetsdefer.broward module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.chestxray">datasetsdefer.chestxray module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.cifar_h">datasetsdefer.cifar_h module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.cifar_synth">datasetsdefer.cifar_synth module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.generic_dataset">datasetsdefer.generic_dataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.hatespeech">datasetsdefer.hatespeech module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.imagenet_16h">datasetsdefer.imagenet_16h module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer.synthetic_data">datasetsdefer.synthetic_data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datasetsdefer">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="helpers.html">helpers package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html">networks package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Human Deferral</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">improved_deferral</a></li>
+      <li class="breadcrumb-item active">datasetsdefer package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/datasetsdefer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="datasetsdefer-package">
+<h1>datasetsdefer package<a class="headerlink" href="#datasetsdefer-package" title="Permalink to this heading"></a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-datasetsdefer.basedataset">
+<span id="datasetsdefer-basedataset-module"></span><h2>datasetsdefer.basedataset module<a class="headerlink" href="#module-datasetsdefer.basedataset" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.basedataset.BaseDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.basedataset.</span></span><span class="sig-name descname"><span class="pre">BaseDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/basedataset.html#BaseDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.basedataset.BaseDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract method for learning to defer methods</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.basedataset.BaseDataset.generate_data">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/basedataset.html#BaseDataset.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.basedataset.BaseDataset.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generates the data loader, called on init</p>
+<dl class="simple">
+<dt>should generate the following must:</dt><dd><p>self.data_train_loader
+self.data_val_loader
+self.data_test_loader
+self.d (dimension)
+self.n_dataset (number of classes in target)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.broward">
+<span id="datasetsdefer-broward-module"></span><h2>datasetsdefer.broward module<a class="headerlink" href="#module-datasetsdefer.broward" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.broward.BrowardDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.broward.</span></span><span class="sig-name descname"><span class="pre">BrowardDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/broward.html#BrowardDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.broward.BrowardDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>Compas dataset with human judgements for 1000 points</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.broward.BrowardDataset.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/broward.html#BrowardDataset.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.broward.BrowardDataset.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generate data for training, validation and test sets</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.chestxray">
+<span id="datasetsdefer-chestxray-module"></span><h2>datasetsdefer.chestxray module<a class="headerlink" href="#module-datasetsdefer.chestxray" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.chestxray.ChestXrayDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.chestxray.</span></span><span class="sig-name descname"><span class="pre">ChestXrayDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">non_deferral_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_data_aug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_chosen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/chestxray.html#ChestXrayDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.chestxray.ChestXrayDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>Chest X-ray dataset from NIH with multiple radiologist annotations per point from Google Research</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.chestxray.ChestXrayDataset.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/chestxray.html#ChestXrayDataset.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.chestxray.ChestXrayDataset.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generate data for training, validation and test sets</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.cifar_h">
+<span id="datasetsdefer-cifar-h-module"></span><h2>datasetsdefer.cifar_h module<a class="headerlink" href="#module-datasetsdefer.cifar_h" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_h.Cifar10h">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.cifar_h.</span></span><span class="sig-name descname"><span class="pre">Cifar10h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_data_aug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_h.html#Cifar10h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_h.Cifar10h" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>CIFAR-10H dataset with seperate human annotations on the test set of CIFAR-10</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_h.Cifar10h.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_h.html#Cifar10h.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_h.Cifar10h.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generate data for training, validation and test sets
+: “airplane”: 0, “automobile”: 1, “bird”: 2, “cat”: 3, “deer”: 4, “dog”: 5, “frog”: 6, “horse”: 7, “ship”: 8, “truck”: 9</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_h.Cifar10h.metrics_cifar10h">
+<span class="sig-name descname"><span class="pre">metrics_cifar10h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_h.html#Cifar10h.metrics_cifar10h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_h.Cifar10h.metrics_cifar10h" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.cifar_synth">
+<span id="datasetsdefer-cifar-synth-module"></span><h2>datasetsdefer.cifar_synth module<a class="headerlink" href="#module-datasetsdefer.cifar_synth" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_synth.CifarSynthDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.cifar_synth.</span></span><span class="sig-name descname"><span class="pre">CifarSynthDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expert_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_data_aug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_synth.html#CifarSynthDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_synth.CifarSynthDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>This is the CifarK synthetic expert on top of Cifar-10 from Consistent Estimators for Learning to Defer (<a class="reference external" href="https://arxiv.org/abs/2006.01862">https://arxiv.org/abs/2006.01862</a>)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_synth.CifarSynthDataset.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_synth.html#CifarSynthDataset.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_synth.CifarSynthDataset.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generate data for training, validation and test sets</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_synth.CifarSynthExpert">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.cifar_synth.</span></span><span class="sig-name descname"><span class="pre">CifarSynthExpert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_classes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_synth.html#CifarSynthExpert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_synth.CifarSynthExpert" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>simple class to describe our synthetic expert on CIFAR-10    k: number of classes expert can predict, n_classes: number of classes (10 for CIFAR-10)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.cifar_synth.CifarSynthExpert.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/cifar_synth.html#CifarSynthExpert.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.cifar_synth.CifarSynthExpert.predict" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.generic_dataset">
+<span id="datasetsdefer-generic-dataset-module"></span><h2>datasetsdefer.generic_dataset module<a class="headerlink" href="#module-datasetsdefer.generic_dataset" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.generic_dataset.GenericDatasetDeferral">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.generic_dataset.</span></span><span class="sig-name descname"><span class="pre">GenericDatasetDeferral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/generic_dataset.html#GenericDatasetDeferral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.generic_dataset.GenericDatasetDeferral" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.generic_dataset.GenericDatasetDeferral.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/generic_dataset.html#GenericDatasetDeferral.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.generic_dataset.GenericDatasetDeferral.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generates the data loader, called on init</p>
+<dl class="simple">
+<dt>should generate the following must:</dt><dd><p>self.data_train_loader
+self.data_val_loader
+self.data_test_loader
+self.d (dimension)
+self.n_dataset (number of classes in target)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.generic_dataset.GenericImageExpertDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.generic_dataset.</span></span><span class="sig-name descname"><span class="pre">GenericImageExpertDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expert_preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/generic_dataset.html#GenericImageExpertDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.generic_dataset.GenericImageExpertDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.hatespeech">
+<span id="datasetsdefer-hatespeech-module"></span><h2>datasetsdefer.hatespeech module<a class="headerlink" href="#module-datasetsdefer.hatespeech" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.HateSpeech">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.hatespeech.</span></span><span class="sig-name descname"><span class="pre">HateSpeech</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_texts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_demographics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expert_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synth_exp_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.7,</span> <span class="pre">0.7]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#HateSpeech"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.HateSpeech" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>Hatespeech dataset from Davidson et al. 2017</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.HateSpeech.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#HateSpeech.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.HateSpeech.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generate data for training, validation and test sets</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.HateSpeech.model_setting">
+<span class="sig-name descname"><span class="pre">model_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_nn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#HateSpeech.model_setting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.HateSpeech.model_setting" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.ModelPredictAAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.hatespeech.</span></span><span class="sig-name descname"><span class="pre">ModelPredictAAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocabfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#ModelPredictAAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.ModelPredictAAE" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.ModelPredictAAE.infer_cvb0">
+<span class="sig-name descname"><span class="pre">infer_cvb0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invocab_tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpasses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#ModelPredictAAE.infer_cvb0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.ModelPredictAAE.infer_cvb0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.ModelPredictAAE.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#ModelPredictAAE.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.ModelPredictAAE.load_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.hatespeech.ModelPredictAAE.predict_lang">
+<span class="sig-name descname"><span class="pre">predict_lang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tokens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpasses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/hatespeech.html#ModelPredictAAE.predict_lang"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.hatespeech.ModelPredictAAE.predict_lang" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.imagenet_16h">
+<span id="datasetsdefer-imagenet-16h-module"></span><h2>datasetsdefer.imagenet_16h module<a class="headerlink" href="#module-datasetsdefer.imagenet_16h" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.imagenet_16h.ImageNet16h">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.imagenet_16h.</span></span><span class="sig-name descname"><span class="pre">ImageNet16h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_data_aug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/imagenet_16h.html#ImageNet16h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.imagenet_16h.ImageNet16h" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.imagenet_16h.ImageNet16h.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/imagenet_16h.html#ImageNet16h.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.imagenet_16h.ImageNet16h.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generate data for training, validation and test sets</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer.synthetic_data">
+<span id="datasetsdefer-synthetic-data-module"></span><h2>datasetsdefer.synthetic_data module<a class="headerlink" href="#module-datasetsdefer.synthetic_data" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="datasetsdefer.synthetic_data.SyntheticData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datasetsdefer.synthetic_data.</span></span><span class="sig-name descname"><span class="pre">SyntheticData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mix_of_guassians'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expert_deferred_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expert_nondeferred_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_nondeferred_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_of_guassians</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/synthetic_data.html#SyntheticData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.synthetic_data.SyntheticData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datasetsdefer.basedataset.BaseDataset" title="datasetsdefer.basedataset.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>Synthetic dataset introduced in our work</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasetsdefer.synthetic_data.SyntheticData.generate_data">
+<span class="sig-name descname"><span class="pre">generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasetsdefer/synthetic_data.html#SyntheticData.generate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasetsdefer.synthetic_data.SyntheticData.generate_data" title="Permalink to this definition"></a></dt>
+<dd><p>generates the data loader, called on init</p>
+<dl class="simple">
+<dt>should generate the following must:</dt><dd><p>self.data_train_loader
+self.data_val_loader
+self.data_test_loader
+self.d (dimension)
+self.n_dataset (number of classes in target)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datasetsdefer">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-datasetsdefer" title="Permalink to this heading"></a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="baselines.html" class="btn btn-neutral float-left" title="baselines package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="helpers.html" class="btn btn-neutral float-right" title="helpers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Hussein Mozannar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

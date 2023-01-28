@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>helpers package &mdash; Human Deferral 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="networks package" href="networks.html" />
+    <link rel="prev" title="datasetsdefer package" href="datasetsdefer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Human Deferral
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">improved_deferral</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="baselines.html">baselines package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasetsdefer.html">datasetsdefer package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">helpers package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helpers.metrics">helpers.metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helpers.training">helpers.training module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helpers.utils">helpers.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-helpers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html">networks package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Human Deferral</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">improved_deferral</a></li>
+      <li class="breadcrumb-item active">helpers package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/helpers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="helpers-package">
+<h1>helpers package<a class="headerlink" href="#helpers-package" title="Permalink to this heading"></a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-helpers.metrics">
+<span id="helpers-metrics-module"></span><h2>helpers.metrics module<a class="headerlink" href="#module-helpers.metrics" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="helpers.metrics.compute_classification_metrics">
+<span class="sig-prename descclassname"><span class="pre">helpers.metrics.</span></span><span class="sig-name descname"><span class="pre">compute_classification_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/metrics.html#compute_classification_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.metrics.compute_classification_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>compute metrics for just classification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_test</strong> (<em>dict</em>) – dict data with fields ‘labels’,  ‘preds’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with metrics, ‘classifier_all_acc’: classifier accuracy on all data, also returns AUC for preds_proba</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="helpers.metrics.compute_coverage_v_acc_curve">
+<span class="sig-prename descclassname"><span class="pre">helpers.metrics.</span></span><span class="sig-name descname"><span class="pre">compute_coverage_v_acc_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/metrics.html#compute_coverage_v_acc_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.metrics.compute_coverage_v_acc_curve" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_test</strong> (<em>dict</em>) – dict data with field   {‘defers’: defers_all, ‘labels’: truths_all, ‘hum_preds’: hum_preds_all, ‘preds’: predictions_all, ‘rej_score’: rej_score_all, ‘class_probs’: class_probs_all}</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>compute_deferral_metrics(data_test_modified) on different coverage levels, first element of list is compute_deferral_metrics(data_test)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>data (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="helpers.metrics.compute_deferral_metrics">
+<span class="sig-prename descclassname"><span class="pre">helpers.metrics.</span></span><span class="sig-name descname"><span class="pre">compute_deferral_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/metrics.html#compute_deferral_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.metrics.compute_deferral_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_test</strong> (<em>dict</em>) – dict data with fields ‘defers’, ‘labels’, ‘hum_preds’, ‘preds’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with metrics, ‘classifier_all_acc’: classifier accuracy on all data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p>‘human_all_acc’: human accuracy on all data
+‘coverage’: how often classifier predicts</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-helpers.training">
+<span id="helpers-training-module"></span><h2>helpers.training module<a class="headerlink" href="#module-helpers.training" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="helpers.training.train_deferral_single_model">
+<span class="sig-prename descclassname"><span class="pre">helpers.training.</span></span><span class="sig-name descname"><span class="pre">train_deferral_single_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/training.html#train_deferral_single_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.training.train_deferral_single_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="helpers.training.train_single_model">
+<span class="sig-prename descclassname"><span class="pre">helpers.training.</span></span><span class="sig-name descname"><span class="pre">train_single_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/training.html#train_single_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.training.train_single_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method: the method class
+model: model in method
+fit: fit method in Method class</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-helpers.utils">
+<span id="helpers-utils-module"></span><h2>helpers.utils module<a class="headerlink" href="#module-helpers.utils" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="helpers.utils.AverageMeter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">helpers.utils.</span></span><span class="sig-name descname"><span class="pre">AverageMeter</span></span><a class="reference internal" href="_modules/helpers/utils.html#AverageMeter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.utils.AverageMeter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Computes and stores the average and current value</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="helpers.utils.AverageMeter.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/utils.html#AverageMeter.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.utils.AverageMeter.reset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="helpers.utils.AverageMeter.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/utils.html#AverageMeter.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.utils.AverageMeter.update" title="Permalink to this definition"></a></dt>
+<dd><p>_summary_: Updates the average meter with the new value and the number of samples
+:param val: value
+:type val: _type_
+:param n: Defaults to 1.
+:type n: int, optional</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="helpers.utils.ExpertDatasetTensor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">helpers.utils.</span></span><span class="sig-name descname"><span class="pre">ExpertDatasetTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_preds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/utils.html#ExpertDatasetTensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.utils.ExpertDatasetTensor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>Generic dataset with expert predictions and labels and images</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="helpers.utils.accuracy">
+<span class="sig-prename descclassname"><span class="pre">helpers.utils.</span></span><span class="sig-name descname"><span class="pre">accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helpers/utils.html#accuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#helpers.utils.accuracy" title="Permalink to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<em>tensor</em>) – output of the model</p></li>
+<li><p><strong>target</strong> (<em>_type_</em>) – target</p></li>
+<li><p><strong>topk</strong> (<em>tuple</em><em>, </em><em>optional</em>) – topk. Defaults to (1,).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>accuracy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-helpers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-helpers" title="Permalink to this heading"></a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="datasetsdefer.html" class="btn btn-neutral float-left" title="datasetsdefer package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="networks.html" class="btn btn-neutral float-right" title="networks package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Hussein Mozannar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

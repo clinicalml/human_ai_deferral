@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>helpers.metrics &mdash; Human Deferral 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Human Deferral
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">improved_deferral</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Human Deferral</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">helpers.metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for helpers.metrics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+
+<div class="viewcode-block" id="compute_deferral_metrics"><a class="viewcode-back" href="../../helpers.html#helpers.metrics.compute_deferral_metrics">[docs]</a><span class="k">def</span> <span class="nf">compute_deferral_metrics</span><span class="p">(</span><span class="n">data_test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_test (dict): dict data with fields &#39;defers&#39;, &#39;labels&#39;, &#39;hum_preds&#39;, &#39;preds&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: dict with metrics, &#39;classifier_all_acc&#39;: classifier accuracy on all data</span>
+<span class="sd">    &#39;human_all_acc&#39;: human accuracy on all data</span>
+<span class="sd">    &#39;coverage&#39;: how often classifier predicts</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;classifier_all_acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">],</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;human_all_acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;hum_preds&quot;</span><span class="p">],</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;coverage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">])</span>
+    <span class="c1"># get classifier accuracy when defers is 0</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;classifier_nondeferred_acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">][</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="c1"># get human accuracy when defers is 1</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;human_deferred_acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;hum_preds&quot;</span><span class="p">][</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="c1"># get system accuracy</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;system_acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">])</span>
+        <span class="o">+</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;hum_preds&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">]),</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="compute_classification_metrics"><a class="viewcode-back" href="../../helpers.html#helpers.metrics.compute_classification_metrics">[docs]</a><span class="k">def</span> <span class="nf">compute_classification_metrics</span><span class="p">(</span><span class="n">data_test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;compute metrics for just classification</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_test (dict): dict data with fields &#39;labels&#39;,  &#39;preds&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: dict with metrics, &#39;classifier_all_acc&#39;: classifier accuracy on all data, also returns AUC for preds_proba</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;classifier_all_acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span>
+        <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">],</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="c1"># check if preds and labels are binary</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="p">):</span>
+        <span class="c1"># get f1</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;classifier_all_f1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span>
+            <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">],</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;preds_proba&quot;</span> <span class="ow">in</span> <span class="n">data_test</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;auc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span>
+                <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">],</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds_proba&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;auc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span>
+                <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">],</span> <span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;preds&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="compute_coverage_v_acc_curve"><a class="viewcode-back" href="../../helpers.html#helpers.metrics.compute_coverage_v_acc_curve">[docs]</a><span class="k">def</span> <span class="nf">compute_coverage_v_acc_curve</span><span class="p">(</span><span class="n">data_test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_test (dict): dict data with field   {&#39;defers&#39;: defers_all, &#39;labels&#39;: truths_all, &#39;hum_preds&#39;: hum_preds_all, &#39;preds&#39;: predictions_all, &#39;rej_score&#39;: rej_score_all, &#39;class_probs&#39;: class_probs_all}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        data (list): compute_deferral_metrics(data_test_modified) on different coverage levels, first element of list is compute_deferral_metrics(data_test)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get unique rejection scores</span>
+    <span class="n">rej_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;rej_score&quot;</span><span class="p">])</span>
+    <span class="c1"># sort by rejection score</span>
+    <span class="c1"># get the 100 quantiles for rejection scores</span>
+    <span class="n">rej_scores_quantiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">rej_scores</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+    <span class="c1"># for each quantile, get the coverage and accuracy by getting a new deferral decision</span>
+    <span class="n">all_metrics</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_deferral_metrics</span><span class="p">(</span><span class="n">data_test</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">rej_scores_quantiles</span><span class="p">:</span>
+        <span class="c1"># get deferral decision</span>
+        <span class="n">defers</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_test</span><span class="p">[</span><span class="s2">&quot;rej_score&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">copy_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data_test</span><span class="p">)</span>
+        <span class="n">copy_data</span><span class="p">[</span><span class="s2">&quot;defers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">defers</span>
+        <span class="c1"># compute metrics</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">compute_deferral_metrics</span><span class="p">(</span><span class="n">copy_data</span><span class="p">)</span>
+        <span class="n">all_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_metrics</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Hussein Mozannar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

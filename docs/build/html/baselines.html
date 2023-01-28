@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>baselines package &mdash; Human Deferral 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="datasetsdefer package" href="datasetsdefer.html" />
+    <link rel="prev" title="improved_deferral" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Human Deferral
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">improved_deferral</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">baselines package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.basemethod">baselines.basemethod module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.compare_confidence">baselines.compare_confidence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.differentiable_triage">baselines.differentiable_triage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.lce_surrogate">baselines.lce_surrogate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.mix_of_exps">baselines.mix_of_exps module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.one_v_all">baselines.one_v_all module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines.selective_prediction">baselines.selective_prediction module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-baselines">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasetsdefer.html">datasetsdefer package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helpers.html">helpers package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html">networks package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Human Deferral</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">improved_deferral</a></li>
+      <li class="breadcrumb-item active">baselines package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/baselines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="baselines-package">
+<h1>baselines package<a class="headerlink" href="#baselines-package" title="Permalink to this heading"></a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-baselines.basemethod">
+<span id="baselines-basemethod-module"></span><h2>baselines.basemethod module<a class="headerlink" href="#module-baselines.basemethod" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseMethod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.basemethod.</span></span><span class="sig-name descname"><span class="pre">BaseMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseMethod" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract method for learning to defer methods</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseMethod.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseMethod.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseMethod.fit" title="Permalink to this definition"></a></dt>
+<dd><p>this function should fit the model and be enough to evaluate the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseMethod.fit_hyperparam">
+<span class="sig-name descname"><span class="pre">fit_hyperparam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseMethod.fit_hyperparam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseMethod.fit_hyperparam" title="Permalink to this definition"></a></dt>
+<dd><p>This is an optional method that fits and optimizes hyperparameters over a validation set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseMethod.test">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseMethod.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseMethod.test" title="Permalink to this definition"></a></dt>
+<dd><p>this function should return a dict with the following keys:
+‘defers’: deferred binary predictions
+‘preds’:  classifier predictions
+‘labels’: labels
+‘hum_preds’: human predictions
+‘rej_score’: a real score for the rejector, the higher the more likely to be rejected
+‘class_probs’: probability of the classifier for each class (can be scores as well)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseSurrogateMethod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.basemethod.</span></span><span class="sig-name descname"><span class="pre">BaseSurrogateMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseSurrogateMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseSurrogateMethod" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseMethod" title="baselines.basemethod.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Abstract method for learning to defer methods based on a surrogate model</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseSurrogateMethod.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseSurrogateMethod.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseSurrogateMethod.fit" title="Permalink to this definition"></a></dt>
+<dd><p>this function should fit the model and be enough to evaluate the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseSurrogateMethod.fit_epoch">
+<span class="sig-name descname"><span class="pre">fit_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseSurrogateMethod.fit_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseSurrogateMethod.fit_epoch" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the model for one epoch
+model: model to be trained
+dataloader: dataloader
+optimizer: optimizer
+verbose: print loss
+epoch: epoch number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseSurrogateMethod.surrogate_loss_function">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surrogate_loss_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hum_preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseSurrogateMethod.surrogate_loss_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseSurrogateMethod.surrogate_loss_function" title="Permalink to this definition"></a></dt>
+<dd><p>surrogate loss function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.basemethod.BaseSurrogateMethod.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/basemethod.html#BaseSurrogateMethod.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.basemethod.BaseSurrogateMethod.test" title="Permalink to this definition"></a></dt>
+<dd><p>Test the model
+dataloader: dataloader</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines.compare_confidence">
+<span id="baselines-compare-confidence-module"></span><h2>baselines.compare_confidence module<a class="headerlink" href="#module-baselines.compare_confidence" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.compare_confidence.CompareConfidence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.compare_confidence.</span></span><span class="sig-name descname"><span class="pre">CompareConfidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_expert</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/compare_confidence.html#CompareConfidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.compare_confidence.CompareConfidence" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseMethod" title="baselines.basemethod.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Method trains classifier indepedently on cross entropy,
+and expert model on whether human prediction is equal to ground truth.
+Then, at each test point we compare the confidence of the classifier
+and the expert model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.compare_confidence.CompareConfidence.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/compare_confidence.html#CompareConfidence.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.compare_confidence.CompareConfidence.fit" title="Permalink to this definition"></a></dt>
+<dd><p>fits classifier and expert model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataloader_train</strong> (<em>_type_</em>) – train dataloader</p></li>
+<li><p><strong>dataloader_val</strong> (<em>_type_</em>) – val dataloader</p></li>
+<li><p><strong>dataloader_test</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>epochs</strong> (<em>_type_</em>) – training epochs</p></li>
+<li><p><strong>optimizer</strong> (<em>_type_</em>) – optimizer function</p></li>
+<li><p><strong>lr</strong> (<em>_type_</em>) – learning rate</p></li>
+<li><p><strong>scheduler</strong> (<em>_type_</em><em>, </em><em>optional</em>) – scheduler function. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>test_interval</strong> (<em>int</em><em>, </em><em>optional</em>) – _description_. Defaults to 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>metrics on the test set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.compare_confidence.CompareConfidence.fit_epoch_class">
+<span class="sig-name descname"><span class="pre">fit_epoch_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/compare_confidence.html#CompareConfidence.fit_epoch_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.compare_confidence.CompareConfidence.fit_epoch_class" title="Permalink to this definition"></a></dt>
+<dd><p>train classifier for single epoch
+:param dataloader: _description_
+:type dataloader: dataloader
+:param optimizer: _description_
+:type optimizer: optimizer
+:param verbose: to print loss or not. Defaults to True.
+:type verbose: bool, optional
+:param epoch: _description_. Defaults to 1.
+:type epoch: int, optional</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.compare_confidence.CompareConfidence.fit_epoch_expert">
+<span class="sig-name descname"><span class="pre">fit_epoch_expert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/compare_confidence.html#CompareConfidence.fit_epoch_expert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.compare_confidence.CompareConfidence.fit_epoch_expert" title="Permalink to this definition"></a></dt>
+<dd><p>train expert model for single epoch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataloader</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>optimizer</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em><em>, </em><em>optional</em>) – _description_. Defaults to 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.compare_confidence.CompareConfidence.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/compare_confidence.html#CompareConfidence.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.compare_confidence.CompareConfidence.test" title="Permalink to this definition"></a></dt>
+<dd><p>this function should return a dict with the following keys:
+‘defers’: deferred binary predictions
+‘preds’:  classifier predictions
+‘labels’: labels
+‘hum_preds’: human predictions
+‘rej_score’: a real score for the rejector, the higher the more likely to be rejected
+‘class_probs’: probability of the classifier for each class (can be scores as well)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines.differentiable_triage">
+<span id="baselines-differentiable-triage-module"></span><h2>baselines.differentiable_triage module<a class="headerlink" href="#module-baselines.differentiable_triage" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.differentiable_triage.</span></span><span class="sig-name descname"><span class="pre">DifferentiableTriage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_rejector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'human_error'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseMethod" title="baselines.basemethod.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.find_machine_samples">
+<span class="sig-name descname"><span class="pre">find_machine_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hum_preds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.find_machine_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.find_machine_samples" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_outputs</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>data_y</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>hum_preds</strong> (<em>_type_</em>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>binary array of size equal to the input indicating whether to train or not on each poin</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.fit" title="Permalink to this definition"></a></dt>
+<dd><p>this function should fit the model and be enough to evaluate the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.fit_epoch_class">
+<span class="sig-name descname"><span class="pre">fit_epoch_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.fit_epoch_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.fit_epoch_class" title="Permalink to this definition"></a></dt>
+<dd><p>train classifier for single epoch
+:param dataloader: _description_
+:type dataloader: dataloader
+:param optimizer: _description_
+:type optimizer: optimizer
+:param verbose: to print loss or not. Defaults to True.
+:type verbose: bool, optional
+:param epoch: _description_. Defaults to 1.
+:type epoch: int, optional</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.fit_epoch_class_triage">
+<span class="sig-name descname"><span class="pre">fit_epoch_class_triage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.fit_epoch_class_triage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.fit_epoch_class_triage" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the model for classifier for one epoch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.fit_epoch_rejector">
+<span class="sig-name descname"><span class="pre">fit_epoch_rejector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.fit_epoch_rejector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.fit_epoch_rejector" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the rejector for one epoch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.fit_hyperparam">
+<span class="sig-name descname"><span class="pre">fit_hyperparam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.fit_hyperparam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.fit_hyperparam" title="Permalink to this definition"></a></dt>
+<dd><p>This is an optional method that fits and optimizes hyperparameters over a validation set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.DifferentiableTriage.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#DifferentiableTriage.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.DifferentiableTriage.test" title="Permalink to this definition"></a></dt>
+<dd><p>this function should return a dict with the following keys:
+‘defers’: deferred binary predictions
+‘preds’:  classifier predictions
+‘labels’: labels
+‘hum_preds’: human predictions
+‘rej_score’: a real score for the rejector, the higher the more likely to be rejected
+‘class_probs’: probability of the classifier for each class (can be scores as well)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="baselines.differentiable_triage.weighted_cross_entropy_loss">
+<span class="sig-prename descclassname"><span class="pre">baselines.differentiable_triage.</span></span><span class="sig-name descname"><span class="pre">weighted_cross_entropy_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/differentiable_triage.html#weighted_cross_entropy_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.differentiable_triage.weighted_cross_entropy_loss" title="Permalink to this definition"></a></dt>
+<dd><p>Weigthed cross entropy loss
+outputs: network outputs with softmax
+labels: target
+weights: weights for each example</p>
+<p>return: weighted cross entropy loss as scalar</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines.lce_surrogate">
+<span id="baselines-lce-surrogate-module"></span><h2>baselines.lce_surrogate module<a class="headerlink" href="#module-baselines.lce_surrogate" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.lce_surrogate.LceSurrogate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.lce_surrogate.</span></span><span class="sig-name descname"><span class="pre">LceSurrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/lce_surrogate.html#LceSurrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.lce_surrogate.LceSurrogate" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseSurrogateMethod" title="baselines.basemethod.BaseSurrogateMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseSurrogateMethod</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.lce_surrogate.LceSurrogate.fit_hyperparam">
+<span class="sig-name descname"><span class="pre">fit_hyperparam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/lce_surrogate.html#LceSurrogate.fit_hyperparam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.lce_surrogate.LceSurrogate.fit_hyperparam" title="Permalink to this definition"></a></dt>
+<dd><p>This is an optional method that fits and optimizes hyperparameters over a validation set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.lce_surrogate.LceSurrogate.surrogate_loss_function">
+<span class="sig-name descname"><span class="pre">surrogate_loss_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hum_preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/lce_surrogate.html#LceSurrogate.surrogate_loss_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.lce_surrogate.LceSurrogate.surrogate_loss_function" title="Permalink to this definition"></a></dt>
+<dd><p>Implmentation of L_{CE}^{lpha}</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines.mix_of_exps">
+<span id="baselines-mix-of-exps-module"></span><h2>baselines.mix_of_exps module<a class="headerlink" href="#module-baselines.mix_of_exps" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.mix_of_exps.MixtureOfExperts">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.mix_of_exps.</span></span><span class="sig-name descname"><span class="pre">MixtureOfExperts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/mix_of_exps.html#MixtureOfExperts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.mix_of_exps.MixtureOfExperts" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseMethod" title="baselines.basemethod.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Implementation of Madras et al., 2018</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.mix_of_exps.MixtureOfExperts.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/mix_of_exps.html#MixtureOfExperts.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.mix_of_exps.MixtureOfExperts.fit" title="Permalink to this definition"></a></dt>
+<dd><p>this function should fit the model and be enough to evaluate the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.mix_of_exps.MixtureOfExperts.fit_epoch">
+<span class="sig-name descname"><span class="pre">fit_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/mix_of_exps.html#MixtureOfExperts.fit_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.mix_of_exps.MixtureOfExperts.fit_epoch" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the model for one epoch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.mix_of_exps.MixtureOfExperts.mixtures_of_experts_loss">
+<span class="sig-name descname"><span class="pre">mixtures_of_experts_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">human_is_correct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/mix_of_exps.html#MixtureOfExperts.mixtures_of_experts_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.mix_of_exps.MixtureOfExperts.mixtures_of_experts_loss" title="Permalink to this definition"></a></dt>
+<dd><p>Implmentation of Mixtures of Experts loss from Madras et al., 2018</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.mix_of_exps.MixtureOfExperts.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/mix_of_exps.html#MixtureOfExperts.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.mix_of_exps.MixtureOfExperts.test" title="Permalink to this definition"></a></dt>
+<dd><p>this function should return a dict with the following keys:
+‘defers’: deferred binary predictions
+‘preds’:  classifier predictions
+‘labels’: labels
+‘hum_preds’: human predictions
+‘rej_score’: a real score for the rejector, the higher the more likely to be rejected
+‘class_probs’: probability of the classifier for each class (can be scores as well)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines.one_v_all">
+<span id="baselines-one-v-all-module"></span><h2>baselines.one_v_all module<a class="headerlink" href="#module-baselines.one_v_all" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.one_v_all.OVASurrogate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.one_v_all.</span></span><span class="sig-name descname"><span class="pre">OVASurrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/one_v_all.html#OVASurrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.one_v_all.OVASurrogate" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseMethod" title="baselines.basemethod.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Method of OvA surrogate from Calibrated Learning to Defer with One-vs-All Classifiers <a class="reference external" href="https://proceedings.mlr.press/v162/verma22c/verma22c.pdf">https://proceedings.mlr.press/v162/verma22c/verma22c.pdf</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.one_v_all.OVASurrogate.LogisticLossOVA">
+<span class="sig-name descname"><span class="pre">LogisticLossOVA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/one_v_all.html#OVASurrogate.LogisticLossOVA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.one_v_all.OVASurrogate.LogisticLossOVA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.one_v_all.OVASurrogate.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/one_v_all.html#OVASurrogate.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.one_v_all.OVASurrogate.fit" title="Permalink to this definition"></a></dt>
+<dd><p>this function should fit the model and be enough to evaluate the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.one_v_all.OVASurrogate.fit_epoch">
+<span class="sig-name descname"><span class="pre">fit_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/one_v_all.html#OVASurrogate.fit_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.one_v_all.OVASurrogate.fit_epoch" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the model for one epoch
+model: model to be trained
+dataloader: dataloader
+optimizer: optimizer
+verbose: print loss
+epoch: epoch number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.one_v_all.OVASurrogate.ova_loss">
+<span class="sig-name descname"><span class="pre">ova_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/one_v_all.html#OVASurrogate.ova_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.one_v_all.OVASurrogate.ova_loss" title="Permalink to this definition"></a></dt>
+<dd><p>outputs: network outputs
+m: cost of deferring to expert cost of classifier predicting  hum_preds == target
+labels: target</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.one_v_all.OVASurrogate.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/one_v_all.html#OVASurrogate.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.one_v_all.OVASurrogate.test" title="Permalink to this definition"></a></dt>
+<dd><p>this function should return a dict with the following keys:
+‘defers’: deferred binary predictions
+‘preds’:  classifier predictions
+‘labels’: labels
+‘hum_preds’: human predictions
+‘rej_score’: a real score for the rejector, the higher the more likely to be rejected
+‘class_probs’: probability of the classifier for each class (can be scores as well)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines.selective_prediction">
+<span id="baselines-selective-prediction-module"></span><h2>baselines.selective_prediction module<a class="headerlink" href="#module-baselines.selective_prediction" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="baselines.selective_prediction.SelectivePrediction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">baselines.selective_prediction.</span></span><span class="sig-name descname"><span class="pre">SelectivePrediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/selective_prediction.html#SelectivePrediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.selective_prediction.SelectivePrediction" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#baselines.basemethod.BaseMethod" title="baselines.basemethod.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Selective Prediction method, train classifier on all data, and defer based on thresholding classifier confidence (max class prob)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.selective_prediction.SelectivePrediction.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/selective_prediction.html#SelectivePrediction.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.selective_prediction.SelectivePrediction.fit" title="Permalink to this definition"></a></dt>
+<dd><p>this function should fit the model and be enough to evaluate the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.selective_prediction.SelectivePrediction.fit_epoch_class">
+<span class="sig-name descname"><span class="pre">fit_epoch_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/selective_prediction.html#SelectivePrediction.fit_epoch_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.selective_prediction.SelectivePrediction.fit_epoch_class" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.selective_prediction.SelectivePrediction.set_optimal_threshold">
+<span class="sig-name descname"><span class="pre">set_optimal_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/selective_prediction.html#SelectivePrediction.set_optimal_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.selective_prediction.SelectivePrediction.set_optimal_threshold" title="Permalink to this definition"></a></dt>
+<dd><p>set threshold to maximize system accuracy on validation set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataloader</strong> (<em>_type_</em>) – dataloader validation set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="baselines.selective_prediction.SelectivePrediction.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/baselines/selective_prediction.html#SelectivePrediction.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#baselines.selective_prediction.SelectivePrediction.test" title="Permalink to this definition"></a></dt>
+<dd><p>this function should return a dict with the following keys:
+‘defers’: deferred binary predictions
+‘preds’:  classifier predictions
+‘labels’: labels
+‘hum_preds’: human predictions
+‘rej_score’: a real score for the rejector, the higher the more likely to be rejected
+‘class_probs’: probability of the classifier for each class (can be scores as well)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-baselines">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-baselines" title="Permalink to this heading"></a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="improved_deferral" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="datasetsdefer.html" class="btn btn-neutral float-right" title="datasetsdefer package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Hussein Mozannar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

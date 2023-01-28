@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>datasetsdefer.imagenet_16h &mdash; Human Deferral 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Human Deferral
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">improved_deferral</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Human Deferral</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">datasetsdefer.imagenet_16h</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for datasetsdefer.imagenet_16h</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+<span class="kn">from</span> <span class="nn">datasetsdefer.generic_dataset</span> <span class="kn">import</span> <span class="n">GenericImageExpertDataset</span>
+<span class="kn">from</span> <span class="nn">.basedataset</span> <span class="kn">import</span> <span class="n">BaseDataset</span>
+
+
+<span class="c1"># https://osf.io/2ntrf/</span>
+<span class="c1"># https://www.pnas.org/doi/10.1073/pnas.2111547119</span>
+
+
+<div class="viewcode-block" id="ImageNet16h"><a class="viewcode-back" href="../../datasetsdefer.html#datasetsdefer.imagenet_16h.ImageNet16h">[docs]</a><span class="k">class</span> <span class="nc">ImageNet16h</span><span class="p">(</span><span class="n">BaseDataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">use_data_aug</span><span class="p">,</span>
+        <span class="n">data_dir</span><span class="p">,</span>
+        <span class="n">noise_version</span><span class="p">,</span>
+        <span class="n">test_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">val_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Must go to  https://osf.io/2ntrf/ , click on OSF Storage, download zip, unzip it, and write the path of the folder in data_dir</span>
+<span class="sd">        data_dir: where to save files for model</span>
+<span class="sd">        noise_version: noise version to use from 080,095, 110,125 (From imagenet16h paper)</span>
+<span class="sd">        use_data_aug: whether to use data augmentation (bool)</span>
+<span class="sd">        test_split: percentage of test data</span>
+<span class="sd">        val_split: percentage of data to be used for validation (from training set)</span>
+<span class="sd">        batch_size: batch size for training</span>
+<span class="sd">        transforms: data transforms</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_data_aug</span> <span class="o">=</span> <span class="n">use_data_aug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_split</span> <span class="o">=</span> <span class="n">test_split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_split</span> <span class="o">=</span> <span class="n">val_split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dataset</span> <span class="o">=</span> <span class="mi">16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_split</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">test_split</span> <span class="o">-</span> <span class="n">val_split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise_version</span> <span class="o">=</span> <span class="n">noise_version</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;080&quot;</span><span class="p">,</span> <span class="s2">&quot;095&quot;</span><span class="p">,</span> <span class="s2">&quot;110&quot;</span><span class="p">,</span> <span class="s2">&quot;125&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Noise version not supported, only pick from [&quot;080&quot;,&quot;095&quot;,&quot;110&quot;,&quot;125&quot;]&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_data</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ImageNet16h.generate_data"><a class="viewcode-back" href="../../datasetsdefer.html#datasetsdefer.imagenet_16h.ImageNet16h.generate_data">[docs]</a>    <span class="k">def</span> <span class="nf">generate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        generate data for training, validation and test sets</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check if the folder data_dir has everything we need</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span>
+            <span class="o">+</span> <span class="s2">&quot;/Behavioral Data/human_only_classification_6per_img_export.csv&quot;</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;cant find csv, Please download the data from https://osf.io/2ntrf/ , unzip it, and construct the path of the folder in data_dir&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;/Noisy Images/phase_noise_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_version</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;cant find image folder, Please download the data from https://osf.io/2ntrf/ , unzip it, and construct the path of the folder in data_dir&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># load the csv file</span>
+        <span class="n">data_behavioral</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span>
+            <span class="o">+</span> <span class="s2">&quot;/Behavioral Data/human_only_classification_6per_img_export.csv&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">data_behavioral</span> <span class="o">=</span> <span class="n">data_behavioral</span><span class="p">[</span>
+            <span class="n">data_behavioral</span><span class="p">[</span><span class="s2">&quot;noise_level&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_version</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">data_behavioral</span> <span class="o">=</span> <span class="n">data_behavioral</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;participant_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_category&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;participant_classification&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;confidence&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="c1"># get unique categories</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">data_behavioral</span><span class="p">[</span><span class="s2">&quot;image_category&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="c1"># get mapping from category to index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">category_to_idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">categories</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">))}</span>
+
+        <span class="n">imagenames_categories</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">data_behavioral</span><span class="p">[</span><span class="s2">&quot;image_name&quot;</span><span class="p">],</span> <span class="n">data_behavioral</span><span class="p">[</span><span class="s2">&quot;image_category&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="c1"># for each image name, get all the participant classifications</span>
+        <span class="n">image_name_to_participant_classifications</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">image_name</span> <span class="ow">in</span> <span class="n">data_behavioral</span><span class="p">[</span><span class="s2">&quot;image_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="n">image_name_to_participant_classifications</span><span class="p">[</span><span class="n">image_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_behavioral</span><span class="p">[</span>
+                <span class="n">data_behavioral</span><span class="p">[</span><span class="s2">&quot;image_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">image_name</span>
+            <span class="p">][</span><span class="s2">&quot;participant_classification&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># sample a single classification from the participant classifications</span>
+        <span class="n">image_name_to_single_participant_classification</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">image_name</span> <span class="ow">in</span> <span class="n">image_name_to_participant_classifications</span><span class="p">:</span>
+            <span class="n">image_name_to_single_participant_classification</span><span class="p">[</span>
+                <span class="n">image_name</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">image_name_to_participant_classifications</span><span class="p">[</span><span class="n">image_name</span><span class="p">])</span>
+
+        <span class="n">image_names</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;/Noisy Images/phase_noise_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_version</span>
+        <span class="p">)</span>
+        <span class="n">image_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">image_names</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.png&quot;</span><span class="p">)]</span>
+        <span class="c1"># remove png extension</span>
+        <span class="n">image_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">image_names</span><span class="p">]</span>
+        <span class="n">image_paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;/data/ml2/shared/mozannar/improved_deferral/data/osfstorage-archive/Noisy Images/phase_noise_080/&quot;</span>
+                <span class="o">+</span> <span class="n">x</span>
+                <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">image_names</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1"># get label for image names</span>
+        <span class="n">image_names_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">category_to_idx</span><span class="p">[</span><span class="n">imagenames_categories</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">image_names</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1"># get prediction for image names</span>
+        <span class="n">image_names_human_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">category_to_idx</span><span class="p">[</span><span class="n">image_name_to_single_participant_classification</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">image_names</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">transform_train</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="mi">224</span><span class="p">),</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">CenterCrop</span><span class="p">(</span><span class="mi">224</span><span class="p">),</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span>
+                    <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">transform_test</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="mi">224</span><span class="p">),</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span>
+                    <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">test_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_split</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_paths</span><span class="p">))</span>
+        <span class="n">val_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_split</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_paths</span><span class="p">))</span>
+        <span class="n">train_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_paths</span><span class="p">)</span> <span class="o">-</span> <span class="n">test_size</span> <span class="o">-</span> <span class="n">val_size</span>
+        <span class="n">random_seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+        <span class="n">train_x</span><span class="p">,</span> <span class="n">val_x</span><span class="p">,</span> <span class="n">test_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">random_split</span><span class="p">(</span>
+            <span class="n">image_paths</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">train_size</span><span class="p">,</span> <span class="n">val_size</span><span class="p">,</span> <span class="n">test_size</span><span class="p">],</span>
+            <span class="n">generator</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">train_y</span><span class="p">,</span> <span class="n">val_y</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">random_split</span><span class="p">(</span>
+            <span class="n">image_names_labels</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">train_size</span><span class="p">,</span> <span class="n">val_size</span><span class="p">,</span> <span class="n">test_size</span><span class="p">],</span>
+            <span class="n">generator</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">train_h</span><span class="p">,</span> <span class="n">val_h</span><span class="p">,</span> <span class="n">test_h</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">random_split</span><span class="p">(</span>
+            <span class="n">image_names_human_predictions</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">train_size</span><span class="p">,</span> <span class="n">val_size</span><span class="p">,</span> <span class="n">test_size</span><span class="p">],</span>
+            <span class="n">generator</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">data_train</span> <span class="o">=</span> <span class="n">GenericImageExpertDataset</span><span class="p">(</span>
+            <span class="n">train_x</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">train_x</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">train_y</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">train_y</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">train_h</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">train_h</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">transform_train</span><span class="p">,</span>
+            <span class="n">to_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">data_val</span> <span class="o">=</span> <span class="n">GenericImageExpertDataset</span><span class="p">(</span>
+            <span class="n">val_x</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">val_x</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">val_y</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">val_y</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">val_h</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">val_h</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">transform_test</span><span class="p">,</span>
+            <span class="n">to_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">data_test</span> <span class="o">=</span> <span class="n">GenericImageExpertDataset</span><span class="p">(</span>
+            <span class="n">test_x</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">test_x</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">test_y</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">test_y</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">test_h</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">test_h</span><span class="o">.</span><span class="n">indices</span><span class="p">],</span>
+            <span class="n">transform_test</span><span class="p">,</span>
+            <span class="n">to_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_train_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">data_train</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_val_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">data_val</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_test_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">data_test</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Hussein Mozannar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
