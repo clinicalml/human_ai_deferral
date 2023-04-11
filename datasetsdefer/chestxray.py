@@ -9,6 +9,7 @@ import torch
 import logging
 import pandas as pd
 import sys
+import torch.nn as nn
 
 sys.path.append("../")
 import torchvision.transforms as transforms
@@ -16,7 +17,8 @@ from datasetsdefer.generic_dataset import GenericImageExpertDataset
 import requests
 import urllib.request
 import tarfile
-
+sys.path.append("../networks")
+from networks.cnn import DenseNet121_CE
 
 class ChestXrayDataset(BaseDataset):
     """Chest X-ray dataset from NIH with multiple radiologist annotations per point from Google Research"""
@@ -26,9 +28,10 @@ class ChestXrayDataset(BaseDataset):
         use_data_aug,
         data_dir,
         label_chosen,
-        test_split=0.2,
-        val_split=0.1,
+        test_split=0.3,
+        val_split=0.2,
         batch_size=1000,
+        get_embeddings = False,
         transforms=None,
     ):
         """
@@ -50,6 +53,8 @@ class ChestXrayDataset(BaseDataset):
         self.val_split = val_split
         self.batch_size = batch_size
         self.n_dataset = 2
+        self.get_embeddings = get_embeddings
+        self.d = 1024
         self.train_split = 1 - test_split - val_split
         self.transforms = transforms
         self.generate_data()
@@ -527,3 +532,73 @@ class ChestXrayDataset(BaseDataset):
                 num_workers=0,
                 pin_memory=True,
             )
+    
+        if self.get_embeddings:
+
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+            path_model = '../exp_data/models/chextxray_dn121_3epochs.pt'
+            model_linear =  DenseNet121_CE(2).to(device)
+            # torch load
+            model_linear.load_state_dict(torch.load(path_model))
+
+            model_linear.densenet121.classifier = nn.Sequential(*list(model_linear.densenet121.classifier.children())[:-1])
+            
+            
+            
+            # get embeddings of train-val-test data
+            def get_embeddings(model, data_loader):
+                model.eval()
+                with torch.no_grad():
+                    embeddings = []
+                    for i, (x, y, h) in enumerate(data_loader):
+                        x = x.to(device)
+                        y = y.to(device)
+                        h = h.to(device)
+                        x = model(x)
+                        embeddings.append(x.cpu().numpy())
+                return np.concatenate(embeddings, axis=0)
+            
+            train_embeddings = torch.FloatTensor(get_embeddings(model_linear, self.data_train_loader))
+            val_embeddings = torch.FloatTensor(get_embeddings(model_linear, self.data_val_loader))
+            test_embeddings = torch.FloatTensor(get_embeddings(model_linear, self.data_test_loader))
+
+            
+            data_train = torch.utils.data.TensorDataset(
+                train_embeddings,
+                torch.from_numpy(train_y),
+                torch.from_numpy(train_h),
+            )
+            data_val = torch.utils.data.TensorDataset(
+                val_embeddings,
+                torch.from_numpy(val_y),
+                torch.from_numpy(val_h),
+            )
+            data_test = torch.utils.data.TensorDataset(
+                test_embeddings,
+                torch.from_numpy(test_y),
+                torch.from_numpy(test_h),
+            )
+
+            self.data_train_loader = torch.utils.data.DataLoader(
+                data_train,
+                batch_size=3000,
+                shuffle=False,
+                num_workers=0,
+                pin_memory=True,
+            )
+            self.data_val_loader = torch.utils.data.DataLoader(
+                data_val,
+                batch_size=3000,
+                shuffle=False,
+                num_workers=0,
+                pin_memory=True,
+            )
+            self.data_test_loader = torch.utils.data.DataLoader(
+                data_test,
+                batch_size=3000,
+                shuffle=False,
+                num_workers=0,
+                pin_memory=True,
+            )
+

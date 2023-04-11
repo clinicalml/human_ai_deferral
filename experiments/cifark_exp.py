@@ -43,8 +43,6 @@ from networks.cnn import *
 import datetime
 from networks.cnn import NetSimple
 
-# parse the arguments  data_distribution = "uniform" expert_deferred_error = 0.0 expert_nondeferred_error = 0.5 machine_nondeferred_error = 0 num_of_guassians = 15 d = 30
-
 def main():
 
     # check if there exists directory ../exp_data
@@ -66,8 +64,8 @@ def main():
     optimizer = optim.Adam
     scheduler = None
     lr = 0.001
-    max_trials =2 # 5
-    total_epochs = 50# 100
+    max_trials = 10
+    total_epochs = 50
 
 
     errors_lce = []
@@ -100,7 +98,7 @@ def main():
                 scheduler=scheduler,
                 lr=lr,
                 verbose=False,
-                test_interval=2,
+                test_interval=10,
             )
             rs_metrics = compute_deferral_metrics(RS.test(dataset.data_test_loader))
 
@@ -148,7 +146,7 @@ def main():
                 scheduler=scheduler,
                 lr=lr,
                 verbose=False,
-                test_interval=100,
+                test_interval=10,
             )
             compare_metrics = compute_deferral_metrics(
                 compareconfidence.test(dataset.data_test_loader)
@@ -189,7 +187,7 @@ def main():
             diff_triage = DifferentiableTriage(
                 model_class, model_rejector, device, 0.000, "human_error"
             )
-            diff_triage.fit_hyperparam(
+            diff_triage.fit(
                 dataset.data_train_loader,
                 dataset.data_val_loader,
                 dataset.data_test_loader,

@@ -55,7 +55,7 @@ class LceSurrogate(BaseSurrogateMethod):
         verbose=True,
         test_interval=5,
     ):
-        alpha_grid = [0, 0.2, 0.5, 0.9, 1]
+        alpha_grid = [0, 0.5, 1]
         best_alpha = 0
         best_acc = 0
         model_dict = copy.deepcopy(self.model.state_dict())

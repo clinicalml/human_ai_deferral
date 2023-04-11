@@ -33,6 +33,11 @@ class DenseNet121_CE(nn.Module):
         self.num_ftrs = self.densenet121.classifier.in_features
         self.densenet121.classifier = nn.Sequential(nn.Linear(self.num_ftrs, out_size))
 
+    #def repr(self, x):
+        # get representation before the last layer
+    #    x = self.densenet121.features(x)
+    #    return x
+    
     def forward(self, x):
         x = self.densenet121(x)
         return x

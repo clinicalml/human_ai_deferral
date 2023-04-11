@@ -300,7 +300,7 @@ class DifferentiableTriage(BaseMethod):
             )
             if verbose and epoch % test_interval == 0:
                 logging.info(compute_deferral_metrics(self.test(dataloader_val)))
-            if epoch % test_interval == 0:
+            if epoch % test_interval == 0 and epoch > 1:
                 data_test = self.test(dataloader_val)
                 val_metrics = compute_deferral_metrics(data_test)
                 if val_metrics["system_acc"] >= best_acc:

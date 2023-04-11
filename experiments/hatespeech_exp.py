@@ -68,7 +68,6 @@ def main():
     date_now = date_now.strftime("%Y-%m-%d_%H%M%S")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # {'classifier_all_acc': 0.9211, 'human_all_acc': 0.367, 'coverage': 0.9904, 'classifier_nondeferred_acc': 0.9262924071082391, 'human_deferred_acc': 0.3541666666666667, 'system_acc': 0.9208}
     
     data_dir = '../data'
     
@@ -76,8 +75,8 @@ def main():
     optimizer = optim.Adam
     scheduler = None
     lr = 1e-2
-    max_trials = 5# 5
-    total_epochs = 500 # 100
+    max_trials = 10# 5
+    total_epochs = 100 # 100
 
     # consider changing to NonLinearNet
 
@@ -120,7 +119,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=25,
+            test_interval=5,
         )
         mixofexps_metrics = compute_coverage_v_acc_curve(
             mixofexps.test(dataset.data_test_loader)
@@ -137,7 +136,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=25,
+            test_interval=5,
         )
         lce_metrics = compute_coverage_v_acc_curve(LCE.test(dataset.data_test_loader))
 
@@ -153,7 +152,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=25,
+            test_interval=5,
         )
         compare_metrics = compute_coverage_v_acc_curve(
             compareconfidence.test(dataset.data_test_loader)
@@ -170,7 +169,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=25,
+            test_interval=5,
         )
         ova_metrics = compute_coverage_v_acc_curve(OVA.test(dataset.data_test_loader))
 
@@ -185,7 +184,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=25,
+            test_interval=5,
         )
         sp_metrics = compute_coverage_v_acc_curve(SP.test(dataset.data_test_loader))
 
@@ -203,7 +202,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=25,
+            test_interval=5,
         )
         diff_triage_metrics = compute_coverage_v_acc_curve(
             diff_triage.test(dataset.data_test_loader)

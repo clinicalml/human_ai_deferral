@@ -6,6 +6,8 @@ import torch.distributions as D
 import logging
 import sys
 sys.path.append('../')
+sys.path.append('../networks')
+
 from .basedataset import BaseDataset
 from networks.linear_net import Linear_net_sig
 

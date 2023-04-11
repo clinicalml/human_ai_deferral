@@ -99,8 +99,8 @@ def main():
     optimizer = optim.AdamW
     scheduler = None
     lr = 1e-3
-    max_trials =5 # 5
-    total_epochs = 100# 100
+    max_trials = 10
+    total_epochs = 150# 100
 
 
     errors_lce = []
@@ -126,7 +126,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=1,
+            test_interval=10,
         )
         rs_metrics = compute_coverage_v_acc_curve(RS.test(dataset.data_test_loader))
 
@@ -141,7 +141,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=10,
         )
         mixofexps_metrics = compute_coverage_v_acc_curve(
             mixofexps.test(dataset.data_test_loader)

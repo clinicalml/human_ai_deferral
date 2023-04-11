@@ -76,7 +76,7 @@ def main():
     optimizer = optim.AdamW
     scheduler = None
     lr = 0.01
-    max_trials = 20 # 5
+    max_trials = 20 
     total_epochs = 500# 100
     errors_lce = []
     errors_rs = []
@@ -89,7 +89,7 @@ def main():
 
         # generate data
         dataset = BrowardDataset(data_dir, test_split = 0.2, val_split = 0.1)
-
+        
         model = LinearNet(dataset.d,3).to(device)
         RS = RealizableSurrogate(1, 300, model, device, True)
         RS.fit_hyperparam(

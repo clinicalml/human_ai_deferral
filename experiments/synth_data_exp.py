@@ -43,11 +43,11 @@ from methods.realizable_surrogate import *
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_distribution", type=str, default="uniform")
 parser.add_argument("--expert_deferred_error", type=float, default=0.0)
-parser.add_argument("--expert_nondeferred_error", type=float, default=0.5)
+parser.add_argument("--expert_nondeferred_error", type=float, default=0.3)
 parser.add_argument("--machine_nondeferred_error", type=float, default=0.0)
 parser.add_argument("--num_of_guassians", type=int, default=15)
 parser.add_argument("--d", type=int, default=30)
-parser.add_argument("--milp_time_limit", type=int, default=60*30)
+parser.add_argument("--milp_time_limit", type=int, default=60*40)
 
 
 def main():
@@ -72,7 +72,7 @@ def main():
     optimizer = optim.Adam
     scheduler = None
     lr = 0.1
-    max_trials = 5
+    max_trials = 10
     total_epochs = 1000
     milp_time_limit = args.milp_time_limit
     data_distribution = args.data_distribution

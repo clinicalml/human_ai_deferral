@@ -118,7 +118,7 @@ class CompareConfidence(BaseMethod):
             data_y = data_y.to(self.device)
             hum_preds = hum_preds.to(self.device)
             hum_equal_to_y = (hum_preds == data_y).long()
-            hum_equal_to_y = torch.LongTensor(hum_equal_to_y).to(self.device)
+            hum_equal_to_y = torch.cuda.LongTensor(hum_equal_to_y).to(self.device)
             outputs = self.model_expert(data_x)
             # cross entropy loss
             loss = loss_fn(outputs, hum_equal_to_y)
@@ -196,7 +196,7 @@ class CompareConfidence(BaseMethod):
             self.fit_epoch_expert(
                 dataloader_train, optimizer_expert, verbose=verbose, epoch=epoch
             )
-            if epoch % test_interval == 0:
+            if epoch % test_interval == 0 and epoch > 1:
                 data_test = self.test(dataloader_val)
                 val_metrics = compute_deferral_metrics(data_test)
                 if val_metrics["classifier_all_acc"] >= best_acc: 

@@ -86,8 +86,8 @@ def main():
     optimizer = optim.AdamW
     scheduler = None
     lr = 1e-3
-    max_trials = 3 # 5
-    total_epochs = 200 # 100
+    max_trials = 10
+    total_epochs = 100 # 100
 
 
     errors_lce = []
@@ -103,7 +103,7 @@ def main():
         dataset = ImageNet16h(False, data_dir=data_dir + "/osfstorage-archive/", noise_version=noise_version, batch_size=32, test_split=0.2, val_split=0.01)
 
         model = load_model_imagenet(17)
-        RS = RealizableSurrogate(1, 300, model, device)
+        RS = RealizableSurrogate(1, 300, model, device, True)
         RS.fit_hyperparam(
             dataset.data_train_loader,
             dataset.data_val_loader,
@@ -113,7 +113,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         rs_metrics = compute_coverage_v_acc_curve(RS.test(dataset.data_test_loader))
 
@@ -128,7 +128,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         mixofexps_metrics = compute_coverage_v_acc_curve(
             mixofexps.test(dataset.data_test_loader)
@@ -145,7 +145,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         lce_metrics = compute_coverage_v_acc_curve(LCE.test(dataset.data_test_loader))
 
@@ -161,7 +161,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         compare_metrics = compute_coverage_v_acc_curve(
             compareconfidence.test(dataset.data_test_loader)
@@ -178,7 +178,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         ova_metrics = compute_coverage_v_acc_curve(OVA.test(dataset.data_test_loader))
 
@@ -193,7 +193,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         sp_metrics = compute_coverage_v_acc_curve(SP.test(dataset.data_test_loader))
 
@@ -202,7 +202,7 @@ def main():
         diff_triage = DifferentiableTriage(
             model_class, model_rejector, device, 0.000, "human_error"
         )
-        diff_triage.fit_hyperparam(
+        diff_triage.fit(
             dataset.data_train_loader,
             dataset.data_val_loader,
             dataset.data_test_loader,
@@ -211,7 +211,7 @@ def main():
             scheduler=scheduler,
             lr=lr,
             verbose=False,
-            test_interval=100,
+            test_interval=1,
         )
         diff_triage_metrics = compute_coverage_v_acc_curve(
             diff_triage.test(dataset.data_test_loader)
@@ -237,7 +237,7 @@ def main():
             "differentiable_triage": errors_differentiable_triage,
         }
         # dump data into pickle file
-        with open("../exp_data/data/imagenet_exp_" + date_now + ".pkl", "wb") as f:
+        with open("../exp_data/data/imagenet_exp_" +str(noise_version) + "_"+ date_now + ".pkl", "wb") as f:
             pickle.dump(all_data, f)
 
 

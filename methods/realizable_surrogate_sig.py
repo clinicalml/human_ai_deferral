@@ -1,76 +1,50 @@
-from abc import ABC, abstractmethod
 import copy
-import math
 import torch
-import numpy as np
-import torch.nn as nn
-import torch.nn.functional as F
-import argparse
-import os
-import random
-import shutil
-import time
-import torch.utils.data as data
 import sys
-import pickle
 import logging
 from tqdm import tqdm
 sys.path.append("..")
 from helpers.utils import *
 from helpers.metrics import *
+from baselines.basemethod import BaseSurrogateMethod
 
 
-class BaseMethod(ABC):
-    """Abstract method for learning to defer methods"""
-
-    @abstractmethod
-    def __init__(self, *args, **kwargs):
-        pass
-
-    @abstractmethod
-    def fit(self, *args, **kwargs):
-        """this function should fit the model and be enough to evaluate the model"""
-        pass
-
-    def fit_hyperparam(self, *args, **kwargs):
-        """This is an optional method that fits and optimizes hyperparameters over a validation set"""
-        return self.fit(*args, **kwargs)
-
-    @abstractmethod
-    def test(self, dataloader):
-        """this function should return a dict with the following keys:
-        'defers': deferred binary predictions
-        'preds':  classifier predictions
-        'labels': labels
-        'hum_preds': human predictions
-        'rej_score': a real score for the rejector, the higher the more likely to be rejected
-        'class_probs': probability of the classifier for each class (can be scores as well)
-        """
-        pass
+eps_cst = 1e-8
 
 
-class BaseSurrogateMethod(BaseMethod):
-    """Abstract method for learning to defer methods based on a surrogate model"""
-
+class RealizableSurrogateSigmoid:
+        # fit with hyperparameter tuning over alpha
     def __init__(self, alpha, plotting_interval, model, device, learnable_threshold_rej = False):
-        '''
-        alpha: hyperparameter for surrogate loss 
-        plotting_interval (int): used for plotting model training in fit_epoch
-        model (pytorch model): model used for surrogate
-        device: cuda device or cpu
-        learnable_threshold_rej (bool): whether to learn a treshold on the reject score (applicable to RealizableSurrogate only)
-        '''
-        self.alpha = alpha
-        self.plotting_interval = plotting_interval
-        self.model = model
-        self.device = device
-        self.threshold_rej = 0
-        self.learnable_threshold_rej = learnable_threshold_rej 
-
-    @abstractmethod
+            '''
+            alpha: hyperparameter for surrogate loss 
+            plotting_interval (int): used for plotting model training in fit_epoch
+            model (pytorch model): model used for surrogate
+            device: cuda device or cpu
+            learnable_threshold_rej (bool): whether to learn a treshold on the reject score (applicable to RealizableSurrogate only)
+            '''
+            self.alpha = alpha
+            self.plotting_interval = plotting_interval
+            self.model = model
+            self.device = device
+            self.threshold_rej = 0
+            self.learnable_threshold_rej = learnable_threshold_rej 
     def surrogate_loss_function(self, outputs, hum_preds, data_y):
-        """surrogate loss function"""
-        pass
+        """ Implementation of our RealizableSurrogate loss function
+        """
+        human_correct = (hum_preds == data_y).float()
+        human_correct = torch.tensor(human_correct).to(self.device)
+        batch_size = outputs.size()[0]  # batch_size
+        outputs_exp = torch.exp(outputs[:,:-1])
+        prob_sigmoid = torch.sigmoid(outputs[:, -1])
+
+        ce_loss = -torch.log2(
+            ((outputs_exp[range(batch_size), data_y])
+            / (torch.sum(outputs_exp, dim=1) + eps_cst)) *(1-prob_sigmoid) + prob_sigmoid * human_correct
+        )
+        
+        return torch.sum(ce_loss) / batch_size
+
+
 
     def fit_epoch(self, dataloader, optimizer, verbose=False, epoch=1):
         """
@@ -139,7 +113,7 @@ class BaseSurrogateMethod(BaseMethod):
         best_model = copy.deepcopy(self.model.state_dict())
         for epoch in tqdm(range(epochs)):
             self.fit_epoch(dataloader_train, optimizer, verbose, epoch)
-            if epoch % test_interval == 0 and epoch > 1 :
+            if epoch % test_interval == 0:
                 if self.learnable_threshold_rej:
                     self.fit_treshold_rej(dataloader_val)
                 data_test = self.test(dataloader_val)
@@ -200,13 +174,13 @@ class BaseSurrogateMethod(BaseMethod):
 
                 outputs = self.model(data_x)
                 outputs_class = F.softmax(outputs[:, :-1], dim=1)
-                outputs = F.softmax(outputs, dim=1)
-                _, predicted = torch.max(outputs.data, 1)
-                max_probs, predicted_class = torch.max(outputs.data[:, :-1], 1)
+                outputs_class = F.softmax(outputs_class, dim=1)
+                _, predicted = torch.max(outputs_class.data, 1)
+                max_probs, predicted_class = torch.max(outputs_class.data, 1)
                 predictions_all.extend(predicted_class.cpu().numpy())
-                
-                defer_scores = [ outputs.data[i][-1].item() - outputs.data[i][predicted_class[i]].item() for i in range(len(outputs.data))]
-                defer_binary = [int(defer_score >= self.threshold_rej) for defer_score in defer_scores]
+                defer_outputs = F.sigmoid(outputs[:, -1])
+                defer_scores = [ defer_outputs[i].item() for i in range(len(defer_outputs))]
+                defer_binary = [int(defer_score >= 0.5) for defer_score in defer_scores]
                 defers_all.extend(defer_binary)
                 truths_all.extend(data_y.cpu().numpy())
                 hum_preds_all.extend(hum_preds.cpu().numpy())

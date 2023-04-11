@@ -6,8 +6,10 @@ import pandas as pd
 import sys
 import torch
 import sys
-
+import torch.nn as nn
 sys.path.append("../")
+sys.path.append("../networks")
+from networks.cnn import DenseNet121_CE
 import torchvision.transforms as transforms
 from datasetsdefer.generic_dataset import GenericImageExpertDataset
 from .basedataset import BaseDataset
@@ -26,6 +28,7 @@ class ImageNet16h(BaseDataset):
         test_split=0.2,
         val_split=0.1,
         batch_size=1000,
+        get_embeddings=False,
         transforms=None,
     ):
         """
@@ -47,6 +50,8 @@ class ImageNet16h(BaseDataset):
         self.train_split = 1 - test_split - val_split
         self.transforms = transforms
         self.noise_version = noise_version
+        self.get_embeddings = get_embeddings
+        self.d = 1024
         if self.noise_version not in ["080", "095", "110", "125"]:
             raise ValueError(
                 'Noise version not supported, only pick from ["080","095","110","125"]'
@@ -161,6 +166,11 @@ class ImageNet16h(BaseDataset):
                 ),
             ]
         )
+        transform_test_tensor = transforms.Compose(
+            [
+            transforms.ToTensor()
+            ]
+        )
 
         test_size = int(self.test_split * len(image_paths))
         val_size = int(self.val_split * len(image_paths))
@@ -182,6 +192,9 @@ class ImageNet16h(BaseDataset):
             [train_size, val_size, test_size],
             generator=torch.Generator().manual_seed(random_seed),
         )
+
+
+
 
         data_train = GenericImageExpertDataset(
             train_x.dataset[train_x.indices],
@@ -208,7 +221,7 @@ class ImageNet16h(BaseDataset):
         self.data_train_loader = torch.utils.data.DataLoader(
             data_train,
             batch_size=self.batch_size,
-            shuffle=True,
+            shuffle=False,
             num_workers=0,
             pin_memory=True,
         )
@@ -226,3 +239,63 @@ class ImageNet16h(BaseDataset):
             num_workers=0,
             pin_memory=True,
         )
+
+        if self.get_embeddings:
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            model_linear = DenseNet121_CE(16).to(device)
+            model_linear.densenet121.classifier = nn.Sequential(*list(model_linear.densenet121.classifier.children())[:-1])
+            # get embeddings of train-val-test data
+            def get_embeddings(model, data_loader):
+                model.eval()
+                with torch.no_grad():
+                    embeddings = []
+                    for i, (x, y, h) in enumerate(data_loader):
+                        x = x.to(device)
+                        y = y.to(device)
+                        h = h.to(device)
+                        x = model(x)
+                        embeddings.append(x.cpu().numpy())
+                return np.concatenate(embeddings, axis=0)
+            
+            train_embeddings = torch.FloatTensor(get_embeddings(model_linear, self.data_train_loader))
+            val_embeddings = torch.FloatTensor(get_embeddings(model_linear, self.data_val_loader))
+            test_embeddings = torch.FloatTensor(get_embeddings(model_linear, self.data_test_loader))
+
+            
+            data_train = torch.utils.data.TensorDataset(
+                train_embeddings,
+                torch.from_numpy(train_y.dataset[train_y.indices]),
+                torch.from_numpy(train_h.dataset[train_h.indices]),
+            )
+            data_val = torch.utils.data.TensorDataset(
+                val_embeddings,
+                torch.from_numpy(val_y.dataset[val_y.indices]),
+                torch.from_numpy(val_h.dataset[val_h.indices]),
+            )
+            data_test = torch.utils.data.TensorDataset(
+                test_embeddings,
+                torch.from_numpy(test_y.dataset[test_y.indices]),
+                torch.from_numpy(test_h.dataset[test_h.indices]),
+            )
+
+            self.data_train_loader = torch.utils.data.DataLoader(
+                data_train,
+                batch_size=1000,
+                shuffle=False,
+                num_workers=0,
+                pin_memory=True,
+            )
+            self.data_val_loader = torch.utils.data.DataLoader(
+                data_val,
+                batch_size=1000,
+                shuffle=False,
+                num_workers=0,
+                pin_memory=True,
+            )
+            self.data_test_loader = torch.utils.data.DataLoader(
+                data_test,
+                batch_size=1000,
+                shuffle=False,
+                num_workers=0,
+                pin_memory=True,
+            )

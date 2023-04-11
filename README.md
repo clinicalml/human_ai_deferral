@@ -1,5 +1,7 @@
 # Human-AI Deferral: Algorithms and Benchmark for Learning to Defer to Humans
-Associated code for paper [Who Should Predict? Exact Algorithms For Learning to Defer to Humans](https://arxiv.org/abs/2301.06197) to be published in AISTATS 2023.
+
+Associated code for paper [Who Should Predict? Exact Algorithms For Learning to Defer to Humans](https://arxiv.org/abs/2301.06197)   published in AISTATS 2023.
+
 
 
 # What is it?
@@ -162,6 +164,8 @@ This repository is organized as follows:
 - helpers: various methods used, including metrics implementation
 
 One can easily implement new surrogate methods by extending [BaseSurrogateMethod](baselines/basemethod.py). 
+
+We also welcome the addition of new datasets (e.g. dynabench and others).
 
 # Citation
 

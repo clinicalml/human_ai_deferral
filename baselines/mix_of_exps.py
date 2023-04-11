@@ -120,7 +120,7 @@ class MixtureOfExperts(BaseMethod):
             scheduler = scheduler(optimizer, len(dataloader_train)*epochs) 
         for epoch in tqdm(range(epochs)):
             self.fit_epoch(dataloader_train, optimizer, verbose, epoch)
-            if verbose and epoch % test_interval == 0:
+            if verbose and epoch % test_interval == 0 and epoch > 1:
                 data_test = self.test(dataloader_val)
                 logging.info(compute_deferral_metrics(data_test))
             if scheduler is not None:
