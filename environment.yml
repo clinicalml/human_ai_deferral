@@ -144,4 +144,3 @@ dependencies:
   - zstd=1.4.9=haebb681_0
   - pip:
     - gurobipy==9.5.2
-prefix: /opt/conda/mozannar/envs/deferral
