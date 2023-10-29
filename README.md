@@ -1,6 +1,6 @@
 # Human-AI Deferral: Algorithms and Benchmark for Learning to Defer to Humans
 
-Associated code for paper [Who Should Predict? Exact Algorithms For Learning to Defer to Humans](https://arxiv.org/abs/2301.06197)   published in AISTATS 2023.
+Associated code for paper [Who Should Predict? Exact Algorithms For Learning to Defer to Humans](https://arxiv.org/abs/2301.06197)   published in AISTATS 2023 (oral).
 
 
 
