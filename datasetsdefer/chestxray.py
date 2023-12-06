@@ -194,9 +194,7 @@ class ChestXrayDataset(BaseDataset):
                 f.write(r.content)
 
             logging.info("Finished Downloading  readers NIH data")
-            r = requests.get(
-                "https://dl2.boxcloud.com/d/1/b1!54XsklVtK4wWu3E-qHtsc9JEcNkALHT_hWAUX_n2jJE1XNe5w7dXSoPbm8e1OqaA8xcmquQ2M-qbMKV_StRSatX2KMHE__vr4Z16j1mcnDlFWCXF71jpbZum1lRwn_i5iom8wJ7J0bx7Px2MJgefbb8QKUxvuMGEmnA3-e69TegyuT8wLqB0YPx19Bp8Iue4TKEJ457zFnPjtfC2p5le1yQjfIoxzKXi2oSFxZcSTAv8se3Eynm6ssbAKhs7CC9NbJruD1wuJmQYjcy3YQvEAIgdTTaIDItLiX-GWVIqgZkhPwbnnE0XGT2dm9TlS0WKq7saLydgx4ji88SmVTtr4t82V2h1AnL-6KXl2LPam8DWjSIeja-ehu5vSPf2Uyn4ShIwBHrJM7yFZWa9VrePrd7ANGMVKU879rD01gBrXTvoPdDSKe9KRHfPbCsBCkW0B2NN5T_GvKQAtN4-OFnmGF2QQDFLq17X32XKbPyfXHPAU3eICueFNOPo9MPOESoJ48gpSAIkIjB5VpCYDSK_2Bpm4U3EVfFGCx2FOo48B6_jTo1Xw2c04_RWVEDHfm30IBFMn8Qd5vFea1rFLCXQkKUCVipyLO4z2ezkIk8TaeL0u_6UnaN8bfsIhjyhxM1JwfJT0Z150njCPHHd3CmJe-Cg0Qq-TI9-P1yPFAfEBmkYVyeLzQ9H6HjdmAvMPUvXyXck-_EOBCSV9eIEkH_ZOhN1DHdd3kB-feB-2p_d65cXI1o-f-C5Ep15-AW8mnLn9UU6rG_EgsEyMev0kC75Zo0hO2rOXG_fbZ10PHt4fplmV02pYGDfvGvXtPOHF3nG_qqLF9hNgf1D6IqekWTxeS3SGEL-M3OEl6rhI_1TFg0OQLOy9UtibVPerHYmAwTyTJWFxbjp0pHXGdLZixpLWvZZ0H56aYlILyDP6PJcWMtvdXTRvBE3GdMRv0A1wVKK5tVcYeIEbAgR668AN2FIlbEDsrWjdE6DgvfiXtpaCWY8FmxRWu0UkA-GvAgVuMFhS4FFb5xzTnoUS9IBjkPB_hu8jCsC1qJXBavmWnOEVuTRMQIkhXeIdAw_OR2847VNxMpLOvpb2CIVHrRiDYXI25CO5VBR0jFk4YlX-1mfHApalBLgOaVVdQK4YCd_7J2EGij_41HipGcRSqgRUcZfecfgslc3vTP_vDAo4bASKeeHnKa-6WbP7FGrXyhur-Zv-olIQZPWX5iXJetVv4fHm0QoMLq2q1zk_ARioJSXCIaf9pM6a0rkCN5I64-DaugzU2XZ/download"
-            )
+            r = requests.get("https://raw.githubusercontent.com/raj713335/AI-IN-MEDICINE-SPECIALIZATION/master/DATA/Data_Entry_2017_v2020.csv")
             with open(self.data_dir + "/Data_Entry_2017_v2020.csv", "wb") as f:
                 f.write(r.content)
 
