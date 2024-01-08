@@ -177,3 +177,8 @@ We also welcome the addition of new datasets (e.g. dynabench and others).
   year={2023}
 }
 ```
+
+# Acknowledgements
+
+This work is partially funded by the MIT-IBM Watson AI Lab.
+
